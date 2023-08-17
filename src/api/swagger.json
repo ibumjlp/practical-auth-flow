@@ -1,0 +1,397 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Multi-Path API",
+        "version": "1.0.0",
+        "description": "API documentation for an application with multiple paths",
+        "termsOfService": "http://example.com/terms/",
+        "contact": {
+            "name": "API Support",
+            "url": "https://www.linkedin.com/in/jull4/",
+            "email": "ibumjlp@hotmail.com"
+        },
+        "license": {
+            "name": "Mock License - Apache 2.0",
+            "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
+        }
+    },
+    "servers": [
+        {
+            "url": "http://localhost:5051/api/v1",
+            "description": "Development server"
+        }
+    ],
+    "components": {
+        "securitySchemes": {
+            "BearerAuth": {
+                "type": "apiKey",
+                "name": "Authorization",
+                "in": "header",
+                "description": "JWT Token for authentication",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            }
+        }
+    },
+    "paths": {
+        "/auth/sign-up": {
+            "post": {
+                "summary": "User Registration",
+                "description": "Optional extended description in Markdown.",
+                "tags": [
+                    "Auth"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "example": {
+                                "email": "string",
+                                "username": "string",
+                                "password": "string"
+                            },
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email"
+                                    },
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "minLength": 6
+                                    }
+                                },
+                                "required": [
+                                    "email",
+                                    "username",
+                                    "password"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "User created successfully",
+                                    "data": {
+                                        "username": "test",
+                                        "email": "test@test.com",
+                                        "password": "fakepassword",
+                                        "_id": "fakeid",
+                                        "created_at": "2023-08-16T21:07:10.744Z",
+                                        "updated_at": "2023-08-16T21:07:10.744Z",
+                                        "__v": 0
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized response",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Your email address or username are already in use."
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error response",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "Failed to create user": {
+                                        "value": {
+                                            "message": "Failed to create user"
+                                        }
+                                    },
+                                    "Internal Server Error": {
+                                        "value": {
+                                            "message": "Internal Server Error"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/sign-in": {
+            "post": {
+                "summary": "User Login",
+                "description": "A unique username and associated password provisioned to an identifiable individual to permit them to access the Services.",
+                "tags": [
+                    "Auth"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "examples": {
+                                "example1": {
+                                    "summary": "Login with email",
+                                    "value": {
+                                        "login_type": "email",
+                                        "email": "string",
+                                        "password": "string"
+                                    }
+                                },
+                                "example2": {
+                                    "summary": "Login with username",
+                                    "value": {
+                                        "login_type": "username",
+                                        "username": "string",
+                                        "password": "string"
+                                    }
+                                }
+                            },
+                            "schema": {
+                                "oneOf": [
+                                    {
+                                        "type": "object",
+                                        "properties": {
+                                            "login_type": {
+                                                "type": "string",
+                                                "enum": [
+                                                    "email"
+                                                ]
+                                            },
+                                            "email": {
+                                                "type": "string",
+                                                "format": "email"
+                                            },
+                                            "password": {
+                                                "type": "string",
+                                                "minLength": 6
+                                            }
+                                        },
+                                        "required": [
+                                            "login_type",
+                                            "email",
+                                            "password"
+                                        ]
+                                    },
+                                    {
+                                        "type": "object",
+                                        "properties": {
+                                            "login_type": {
+                                                "type": "username",
+                                                "enum": [
+                                                    "username"
+                                                ]
+                                            },
+                                            "username": {
+                                                "type": "string"
+                                            },
+                                            "password": {
+                                                "type": "string",
+                                                "minLength": 6
+                                            }
+                                        },
+                                        "required": [
+                                            "login_type",
+                                            "username",
+                                            "password"
+                                        ]
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "User Logged in Successfully",
+                                    "data": {
+                                        "access_token": "example.access.token",
+                                        "refresh_token": "example.refresh.token"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized response",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Invalid Credentials"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error response",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Internal Server Error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/refresh-token": {
+            "post": {
+                "summary": "Refresh token",
+                "description": "Service to provide a special token that is used to obtain additional access tokens",
+                "tags": [
+                    "Auth"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "example": {
+                                "refresh_token": "token"
+                            },
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "refresh_token": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "refresh_token"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Verification is successful",
+                                    "data": {
+                                        "access_token": "example.access.token"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error response",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "Failed to create user": {
+                                        "value": {
+                                            "message": "Failed to create user"
+                                        }
+                                    },
+                                    "Internal Server Error": {
+                                        "value": {
+                                            "message": "Internal Server Error"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/account": {
+            "get": {
+                "summary": "Get account information",
+                "description": "Get any information relating to the Account",
+                "tags": [
+                    "Account"
+                ],
+                "security": [
+                    {
+                        "BearerAuth": [
+                            "Authorization"
+                        ]
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "success",
+                                    "data": {
+                                        "username": "test",
+                                        "email": "test@test.com",
+                                        "password": "fakepassword",
+                                        "_id": "fakeid",
+                                        "created_at": "2023-08-16T21:07:10.744Z",
+                                        "updated_at": "2023-08-16T21:07:10.744Z",
+                                        "__v": 0
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized response",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "example1": {
+                                        "summary": "No token provided",
+                                        "value": {
+                                            "message": "Access denied. No token provided."
+                                        }
+                                    },
+                                    "example2": {
+                                        "summary": "Invalid token",
+                                        "value": {
+                                            "message": "Invalid token."
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found response",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "value": {
+                                        "message": "User not found."
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error response",
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "value": {
+                                        "message": "Internal Server Error."
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
